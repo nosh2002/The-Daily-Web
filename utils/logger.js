@@ -12,7 +12,18 @@ if (!fs.existsSync(LOG_DIR)) {
   fs.mkdirSync(LOG_DIR, { recursive: true });
 }
 
+// רמת הלוג נקבעת מ-LOG_LEVEL ב-.env: info (ברירת מחדל, הכל), warn (אזהרות ושגיאות)
+// או error (שגיאות בלבד). קוראים את המשתנה בכל כתיבה ולא פעם אחת בטעינה, כך שהקובץ
+// עובד נכון גם אם dotenv נטען אחרי הלוגר.
+const LEVEL_PRIORITY = { INFO: 1, WARN: 2, ERROR: 3 };
+
+function minPriority() {
+  const configured = String(process.env.LOG_LEVEL || 'info').toUpperCase();
+  return LEVEL_PRIORITY[configured] || LEVEL_PRIORITY.INFO;
+}
+
 function write(level, message, meta) {
+  if (LEVEL_PRIORITY[level] < minPriority()) return;
   const line = `[${new Date().toISOString()}] [${level}] ${message}${
     meta ? ' ' + JSON.stringify(meta) : ''
   }\n`;
