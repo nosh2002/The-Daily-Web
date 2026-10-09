@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="page page-dashboard">
+    <div class="dashboard-header">
+      <h1>אזור הכתב</h1>
+      <form action="/reporter/articles/new" method="POST" class="inline-form">
+        <button type="submit" class="btn btn-primary">+ כתבה חדשה</button>
+      </form>
+    </div>
+
+    <% if (!articles.length) { %>
+      <p class="empty-state">עדיין לא יצרת אף כתבה. לחצו על "כתבה חדשה" כדי להתחיל.</p>
+    <% } %>
+
+    <table class="article-table">
+      <thead>
+        <tr>
+          <th>כותרת</th>
+          <th>קטגוריה</th>
+          <th>מצב</th>
+          <th>עודכן לאחרונה</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% articles.forEach(function(a) { %>
+          <tr>
+            <td><%= a.content.title %></td>
+            <td><%= a.content.category %></td>
+            <td>
+              <span class="status-badge status-<%= a.status %>"><%= STATUS_LABELS_HE[a.status] %></span>
+              <% if (a.status === 'returned' && a.editorNote) { %>
+                <p class="editor-note">הערת עורך: <%= a.editorNote %></p>
+              <% } %>
+            </td>
+            <td><%= new Date(a.updatedAt).toLocaleString('he-IL') %></td>
+            <td>
+              <% if (a.status !== 'pending') { %>
+                <a href="/reporter/articles/<%= a._id %>/edit" class="btn btn-secondary">עריכה</a>
+              <% } else { %>
+                <span class="muted">ממתינה לעורך</span>
+              <% } %>
+              <% if (a.published && a.published.isPublished) { %>
+                <a href="/articles/<%= a._id %>" class="btn btn-link" target="_blank" rel="noopener">צפייה באתר</a>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>
