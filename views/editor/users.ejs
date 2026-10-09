@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="page page-users">
+    <h1>ניהול משתמשים</h1>
+    <p class="page-hint">יצירה, עריכה ומחיקה של חשבונות כתבים. לא ניתן לנהל כאן חשבונות עורכים.</p>
+
+    <form id="createUserForm" class="user-create-form">
+      <div class="form-row">
+        <div>
+          <label for="newUsername">שם משתמש</label>
+          <input type="text" id="newUsername" name="username" required minlength="3" />
+        </div>
+        <div>
+          <label for="newDisplayName">שם תצוגה</label>
+          <input type="text" id="newDisplayName" name="displayName" required />
+        </div>
+        <div>
+          <label for="newPassword">סיסמה</label>
+          <input type="password" id="newPassword" name="password" required minlength="6" />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">+ יצירת כתב חדש</button>
+      <p id="createUserMessage" class="form-message" role="status"></p>
+    </form>
+
+    <table class="article-table" id="usersTable">
+      <thead>
+        <tr>
+          <th>שם משתמש</th>
+          <th>שם תצוגה</th>
+          <th>נוצר בתאריך</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% reporters.forEach(function(u) { %>
+          <tr data-user-id="<%= u._id %>">
+            <td><%= u.username %></td>
+            <td class="user-display-name"><%= u.displayName %></td>
+            <td><%= new Date(u.createdAt).toLocaleDateString('he-IL') %></td>
+            <td>
+              <button type="button" class="btn btn-secondary user-edit-btn">עריכה</button>
+              <button type="button" class="btn btn-danger user-delete-btn">מחיקה</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% if (!reporters.length) { %>
+      <p class="empty-state">אין עדיין חשבונות כתבים במערכת.</p>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/users.js"></script>
+</body>
+</html>

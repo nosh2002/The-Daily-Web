@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <%- include('../partials/head') %>
+  <script src="/vendor/chart.js/chart.umd.js"></script>
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="page page-stats">
+    <h1>אנליטיקס צפיות</h1>
+    <p class="page-subtitle">כמות צפיות לאורך זמן, כולל סימון נקודות פרסום/עדכון</p>
+    <p class="page-hint">הרשימה מציגה את 200 הכתבות המפורסמות ביותר בצפיות</p>
+
+    <label for="articleSelect">בחר כתבה</label>
+    <select id="articleSelect">
+      <option value="">— בחרו כתבה —</option>
+      <% articles.forEach(function(a) { %>
+        <option value="<%= a._id %>" <%= String(a._id) === String(selectedId) ? 'selected' : '' %>>
+          <%= a.published.title %> (<%= a.viewCount %> צפיות)
+        </option>
+      <% }) %>
+    </select>
+
+    <div class="chart-wrapper">
+      <canvas id="viewsChart" height="120"></canvas>
+    </div>
+    <p id="statsMessage" class="form-message"></p>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <script>window.__INITIAL_ARTICLE_ID__ = <%- JSON.stringify(selectedId) %>;</script>
+  <script src="/js/stats.js"></script>
+</body>
+</html>
