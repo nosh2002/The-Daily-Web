@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="page page-edit" data-article-id="<%= article._id %>" data-editable="<%= editable %>">
+    <div class="dashboard-header">
+      <h1>עריכת כתבה</h1>
+      <span class="status-badge status-<%= article.status %>"><%= STATUS_LABELS_HE[article.status] %></span>
+    </div>
+
+    <% if (article.status === 'returned' && article.editorNote) { %>
+      <p class="editor-note-box">
+        <strong>הערת העורך:</strong> <%= article.editorNote %>
+      </p>
+    <% } %>
+
+    <% if (!editable) { %>
+      <p class="info-box">הכתבה ממתינה כעת לאישור עורך ואינה ניתנת לעריכה.</p>
+    <% } %>
+
+    <form id="editForm" class="article-edit-form">
+      <label for="title">כותרת</label>
+      <input type="text" id="title" name="title" value="<%= article.content.title %>" maxlength="200" <%= editable ? '' : 'disabled' %> />
+
+      <label for="summary">תקציר</label>
+      <textarea id="summary" name="summary" rows="2" maxlength="400" <%= editable ? '' : 'disabled' %>><%= article.content.summary %></textarea>
+
+      <div class="form-row">
+        <div>
+          <label for="category">קטגוריה</label>
+          <select id="category" name="category" <%= editable ? '' : 'disabled' %>>
+            <% categories.forEach(function(cat) { %>
+              <option value="<%= cat %>" <%= cat === article.content.category ? 'selected' : '' %>><%= cat %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div>
+          <label for="imageUrl">כתובת תמונה (URL)</label>
+          <input type="text" id="imageUrl" name="imageUrl" value="<%= article.content.imageUrl %>" <%= editable ? '' : 'disabled' %> />
+        </div>
+      </div>
+
+      <label for="body">תוכן הכתבה</label>
+      <textarea id="body" name="body" rows="16" <%= editable ? '' : 'disabled' %>><%= article.content.body %></textarea>
+
+      <div class="form-actions">
+        <p id="saveStatus" class="save-status">נשמר לאחרונה: <span id="lastSavedAt"><%= new Date(article.lastSavedAt).toLocaleTimeString('he-IL') %></span></p>
+        <% if (editable) { %>
+          <button type="button" id="submitBtn" class="btn btn-primary">שליחה לאישור עורך</button>
+        <% } %>
+      </div>
+      <p id="formMessage" class="form-message" role="status"></p>
+    </form>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/reporter.js"></script>
+</body>
+</html>
