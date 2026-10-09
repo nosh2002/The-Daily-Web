@@ -3,6 +3,7 @@ const User = require('../models/User');
 const { asyncHandler, AppError } = require('../middleware/errorHandler');
 const { ROLES } = require('../utils/constants');
 const logger = require('../utils/logger');
+const { recordFailedLogin, clearFailedLogins } = require('../middleware/loginRateLimiter');
 
 function renderLogin(req, res) {
   res.render('login', {
@@ -28,6 +29,7 @@ const login = asyncHandler(async (req, res) => {
 
   if (!user || !passwordOk) {
     logger.warn('ניסיון התחברות כושל', { username });
+    recordFailedLogin(req);
     return res.status(401).render('login', {
       title: 'התחברות',
       error: 'שם משתמש או סיסמה שגויים',
@@ -36,6 +38,7 @@ const login = asyncHandler(async (req, res) => {
   }
 
   // רק המידע הדרוש נשמר ב-session - לא ה-hash של הסיסמה
+  clearFailedLogins(req);
   req.session.user = {
     id: user._id.toString(),
     username: user.username,
