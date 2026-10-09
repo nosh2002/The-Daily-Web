@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <%- include('partials/head') %>
+  <meta name="description" content="<%= article.published.summary %>" />
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <main class="page page-article">
+    <div class="article-layout">
+      <div class="article-content">
+        <article class="article-full" data-article-id="<%= article._id %>">
+          <p class="article-category" data-cat="<%= article.published.category %>"><%= article.published.category %></p>
+          <h1 class="article-title"><%= article.published.title %></h1>
+          <p class="article-meta">
+            מאת <strong><%= article.author ? article.author.displayName : 'מערכת' %></strong>
+            · <time datetime="<%= article.published.publishedAt %>">
+              <%= new Date(article.published.publishedAt).toLocaleString('he-IL') %>
+            </time>
+          </p>
+          <img class="article-image" src="<%= article.published.imageUrl %>" alt="<%= article.published.title %>" />
+
+          <!--
+            התוכן המלא מוזרק כאן ישירות ב-HTML הראשוני שמוחזר מהשרת (Server-Side
+            Rendering באמצעות EJS) ולא נטען אחר-כך ב-JavaScript. כך מנוע חיפוש
+            שלא מריץ JS עדיין "רואה" את הכתבה המלאה - זו בדיוק הדרישה לנגישות
+            לזחלני מנועי חיפוש (SEO).
+          -->
+          <div class="article-body">
+            <% article.published.body.split(/\n+/).forEach(function(paragraph) { %>
+              <% if (paragraph.trim()) { %><p><%= paragraph %></p><% } %>
+            <% }) %>
+          </div>
+        </article>
+
+        <section class="comments-section" aria-label="תגובות">
+          <h2>תגובות (<span id="commentCount"><%= comments.length %></span>)</h2>
+
+          <form id="commentForm" class="comment-form">
+            <label for="commentAuthor">שם</label>
+            <input type="text" id="commentAuthor" name="authorName" maxlength="60" required />
+
+            <label for="commentText">תגובה</label>
+            <textarea id="commentText" name="text" rows="3" maxlength="1000" required></textarea>
+
+            <button type="submit">פרסום תגובה</button>
+            <p id="commentFormMessage" class="form-message" role="status"></p>
+          </form>
+
+          <ul id="commentList" class="comment-list">
+            <% comments.forEach(function(c) { %>
+              <li class="comment-item" data-comment-id="<%= c._id %>">
+                <p class="comment-header"><strong><%= c.authorName %></strong>
+                  <time datetime="<%= c.createdAt %>"><%= new Date(c.createdAt).toLocaleString('he-IL') %></time>
+                </p>
+                <p class="comment-text"><%= c.text %></p>
+                <% if (typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'editor') { %>
+                  <div class="comment-mod-actions">
+                    <button type="button" class="link-button comment-edit-btn">עריכה</button>
+                    <button type="button" class="link-button comment-delete-btn">מחיקה</button>
+                  </div>
+                <% } %>
+              </li>
+            <% }) %>
+          </ul>
+        </section>
+      </div>
+
+      <aside class="sidebar" aria-label="מידע נוסף">
+        <%- include('partials/weather-widget') %>
+      </aside>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+  <script>
+    window.__CURRENT_USER_ROLE__ = <%- JSON.stringify(typeof currentUser !== 'undefined' && currentUser ? currentUser.role : null) %>;
+  </script>
+  <script src="/js/weather-widget.js"></script>
+  <script src="/js/article.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <main class="page page-home">
+    <div class="home-layout">
+      <section class="feed-section" aria-label="פיד חדשות">
+        <form class="feed-controls" id="feedControls">
+          <input
+            type="search"
+            name="search"
+            id="searchInput"
+            placeholder="חיפוש כתבות…"
+            aria-label="חיפוש כתבות"
+          />
+
+          <select name="category" id="categorySelect" aria-label="סינון לפי קטגוריה">
+            <option value="">כל הקטגוריות</option>
+            <% categories.forEach(function(cat) { %>
+              <option value="<%= cat %>"><%= cat %></option>
+            <% }) %>
+          </select>
+
+          <select name="seen" id="seenSelect" aria-label="סינון לפי צפייה">
+            <option value="">הכל</option>
+            <option value="notseen">לא נצפו</option>
+          </select>
+
+          <select name="sort" id="sortSelect" aria-label="מיון">
+            <option value="date">החדשות ביותר</option>
+            <option value="popularity">הפופולריות ביותר</option>
+          </select>
+        </form>
+
+        <div id="feedList" class="feed-list" aria-live="polite"></div>
+        <p id="feedStatus" class="feed-status"></p>
+        <div id="feedSentinel" class="feed-sentinel" aria-hidden="true"></div>
+      </section>
+
+      <aside class="sidebar" aria-label="מידע נוסף">
+        <%- include('partials/weather-widget') %>
+      </aside>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+  <script src="/js/weather-widget.js"></script>
+  <script src="/js/feed.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<header class="site-header">
+  <div class="masthead">
+    <div class="masthead-inner">
+      <span class="masthead-date" id="mastheadDate"></span>
+      <a href="/" class="masthead-brand">
+        <svg class="brand-icon" width="30" height="30" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <circle cx="32" cy="32" r="31" fill="#16213e"/>
+          <circle cx="32" cy="32" r="20" fill="none" stroke="#ffffff" stroke-width="2.4"/>
+          <ellipse cx="32" cy="32" rx="9" ry="20" fill="none" stroke="#ffffff" stroke-width="2"/>
+          <line x1="12.4" y1="32" x2="51.6" y2="32" stroke="#ffffff" stroke-width="2"/>
+          <path d="M14.5 23.5 Q32 30 49.5 23.5" fill="none" stroke="#ffffff" stroke-width="1.6"/>
+          <path d="M14.5 40.5 Q32 34 49.5 40.5" fill="none" stroke="#ffffff" stroke-width="1.6"/>
+        </svg>
+        <span>The Daily Web</span>
+      </a>
+      <span class="masthead-tagline">חדשות, פוליטיקה, כלכלה וספורט — מעודכן מסביב לשעון</span>
+    </div>
+  </div>
+
+  <nav class="navbar" aria-label="ניווט ראשי">
+    <div class="navbar-inner">
+      <button class="nav-toggle" id="navToggle" aria-label="פתח תפריט" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">פיד חדשות</a></li>
+        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+          <% if (currentUser.role === 'reporter') { %>
+            <li><a href="/reporter">אזור הכתב</a></li>
+          <% } else if (currentUser.role === 'editor') { %>
+            <li><a href="/editor">אזור העורך</a></li>
+            <li><a href="/editor/stats">אנליטיקס</a></li>
+            <li><a href="/editor/users">ניהול משתמשים</a></li>
+          <% } %>
+          <li class="nav-user">שלום, <%= currentUser.displayName %></li>
+          <li>
+            <form action="/logout" method="POST" class="inline-form">
+              <button type="submit" class="link-button">התנתקות</button>
+            </form>
+          </li>
+        <% } else { %>
+          <li><a href="/login">כניסת כתבים/עורכים</a></li>
+        <% } %>
+      </ul>
+
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="החלפת מצב תצוגה כהה/בהיר">
+        <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+        <svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
