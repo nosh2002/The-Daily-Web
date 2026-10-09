@@ -22,7 +22,15 @@ const weatherRoutes = require('./routes/weatherRoutes');
 const legalRoutes = require('./routes/legalRoutes');
 
 const app = express();
+
+// מאחורי reverse proxy (Render, Heroku, nginx...) החיבור לשרת שלנו הוא HTTP פנימי.
+// בלי trust proxy, express-session לא היה מזהה שהמשתמש מחובר ב-HTTPS ולא היה
+// שולח עוגייה עם secure:true. הדגל גם גורם ל-req.ip להציג את כתובת הלקוח האמיתית.
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 const PORT = process.env.PORT || 3000;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/the-daily-web';
 
 // רשת ביטחון גלובלית: שגיאה לא צפויה בשום מקום בקוד (כולל שגיאות רשת פנימיות
@@ -69,6 +77,9 @@ app.use(
       maxAge: 7 * 24 * 60 * 60 * 1000, // שבוע
       httpOnly: true,
       sameSite: 'lax',
+      // בייצור (HTTPS) העוגייה תישלח רק בחיבור מוצפן. בפיתוח מקומי (HTTP) זה כבוי,
+      // אחרת ההתחברות לא הייתה עובדת על localhost.
+      secure: IS_PRODUCTION,
     },
   })
 );
