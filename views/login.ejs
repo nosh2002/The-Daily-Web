@@ -15,10 +15,10 @@
       <% } %>
 
       <label for="username">שם משתמש</label>
-      <input type="text" id="username" name="username" required autofocus />
+      <input type="text" id="username" name="username" autocomplete="username" required autofocus />
 
       <label for="password">סיסמה</label>
-      <input type="password" id="password" name="password" required />
+      <input type="password" id="password" name="password" autocomplete="current-password" required />
 
       <input type="hidden" name="next" value="<%= nextUrl %>" />
 
