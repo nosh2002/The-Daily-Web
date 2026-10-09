@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="page page-dashboard">
+    <h1>אזור העורך</h1>
+
+    <nav class="status-filter" aria-label="סינון לפי מצב">
+      <a href="/editor" class="<%= activeStatus === '' ? 'active' : '' %>">הכל</a>
+      <% Object.values(ARTICLE_STATUS).forEach(function(s) { %>
+        <a href="/editor?status=<%= s %>" class="<%= activeStatus === s ? 'active' : '' %>"><%= STATUS_LABELS_HE[s] %></a>
+      <% }) %>
+    </nav>
+
+    <% if (!articles.length) { %>
+      <p class="empty-state">אין כתבות להצגה במצב זה.</p>
+    <% } %>
+
+    <table class="article-table">
+      <thead>
+        <tr>
+          <th>כותרת</th>
+          <th>כתב</th>
+          <th>קטגוריה</th>
+          <th>מצב</th>
+          <th>עודכן לאחרונה</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% articles.forEach(function(a) { %>
+          <tr>
+            <td><%= a.content.title %></td>
+            <td><%= a.author ? a.author.displayName : '—' %></td>
+            <td><%= a.content.category %></td>
+            <td><span class="status-badge status-<%= a.status %>"><%= STATUS_LABELS_HE[a.status] %></span></td>
+            <td><%= new Date(a.updatedAt).toLocaleString('he-IL') %></td>
+            <td>
+              <a href="/editor/articles/<%= a._id %>/review" class="btn btn-secondary">פתיחה</a>
+              <% if (a.published && a.published.isPublished) { %>
+                <a href="/articles/<%= a._id %>" class="btn btn-link" target="_blank" rel="noopener">צפייה באתר</a>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <% if (totalPages > 1) { %>
+      <nav class="pagination" aria-label="דפדוף בין עמודי הכתבות">
+        <% if (page > 1) { %>
+          <a href="/editor?status=<%= activeStatus %>&page=<%= page - 1 %>" class="btn btn-secondary">« הקודם</a>
+        <% } %>
+        <span class="pagination-info">עמוד <%= page %> מתוך <%= totalPages %></span>
+        <% if (page < totalPages) { %>
+          <a href="/editor?status=<%= activeStatus %>&page=<%= page + 1 %>" class="btn btn-secondary">הבא »</a>
+        <% } %>
+      </nav>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>
